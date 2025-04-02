@@ -1,0 +1,79 @@
+/* 
+/public/css/style.css
+*/
+
+body {
+  padding-top: 56px !important;
+}
+
+
+/* Styling for the two-line title */
+.navbar-title {
+  display: inline-block; /* Ensures it stays inline within the navbar */
+  text-align: left; /* Align text to the left */
+}
+
+.navbar-line1 {
+  font-size: 24px; /* Larger font size for "John Bric's" */
+  font-weight: bold; /* Make it bold for emphasis */
+  color: yellow; /* Match or complement your navbar background color */
+}
+
+.navbar-line2 {
+  font-size: 22px; /* Slightly smaller for "Photo Catalog" */
+  font-style: italic;
+  font-weight: normal; /* Normal font weight */
+  color: green; /* A neutral color for distinction */
+}
+
+.navbar-text {
+  margin-right: auto; /* Ensure it aligns to the left */
+  display: block; /* Ensures both lines stack properly */
+}
+.navbar {
+  background-color: #3610e1 !important; /* Dark background */
+  color: rgb(255, 255, 255);
+    position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1030; /* Ensures navbar is above other content */Z
+}
+
+.navbar a.nav-link {
+  color: red !important;
+  font-size: 18px;
+  margin-right: 15px; /* Adds space between navbar items */
+}
+
+.navbar a.nav-link:hover {
+  color: #ff5733 !important; /* Add hover effect */
+}
+
+.navbar-nav {
+  display: flex;   /* Ensure Flexbox layout for consistent spacing */
+  gap: 15px;       /* Adds a consistent gap between navbar items */
+}
+
+@keyframes blink {
+  0% { opacity: 1; }      /* Fully visible at the start */
+  50% { opacity: 1; }     /* Stays visible for 80% of the animation duration (2 seconds of 2.5 seconds) */
+  100% { opacity: 0; }    /* Invisible for the remaining 20% (0.5 seconds) */
+}
+
+.blinking-text {
+  animation: blink 1.5s infinite !important;
+}
+
+/* Center the form container on the page */
+.form-container {
+  display: flex;             /* Enable Flexbox */
+  flex-direction: column;    /* Stack child elements vertically */
+  align-items: stretch;      /* Stretch children to match the container width */
+  justify-content: center;   /* Center vertically on the page */
+  margin: auto;              /* Center the container horizontally */
+  padding: 20px;             /* Add padding inside the box */
+  max-width: 600px;          /* Set a maximum width for responsiveness */
+  border: 1px solid #ccc;    /* Optional: Add a border for better visual separation */
+  background-color: #f9f9f9; /* Optional: Light background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Subtle shadow */
+}

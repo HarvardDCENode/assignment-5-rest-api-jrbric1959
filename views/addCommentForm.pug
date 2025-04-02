@@ -1,0 +1,14 @@
+extends layout
+
+block content
+
+  div.form-group
+    form(method='POST' action="/photos/commentArray/"+photoid)
+      label(for='name') Name:
+      input#name.form-control(type='text',  name='name')
+      label(for='comment') Date/Time:
+      input#name.form-control(type='text',  name='date_time')
+      label(for='comment') Comment:
+      input#name.form-control(type='text',  name='comment_text')
+      button.btn.btn-primary(type='submit') Save New Comment to Photo 
+      a.btn.btn-danger(href='/photos' style='margin: 0;') Exit Without Saving

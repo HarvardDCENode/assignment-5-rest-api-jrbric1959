@@ -1,0 +1,22 @@
+{
+	"folders": [
+    {
+      "name": "assignment-4_CURRENT_-express-routing-mongodb-and-mongoose-jrbric1959",
+      "path": "../assignment-4_CURRENT_-express-routing-mongodb-and-mongoose-jrbric1959"
+    },
+    {
+      "name": "09.1-express-rest-api_ORIGINAL",
+      "path": "../09.1-express-rest-api_ORIGINAL"
+    },
+    {
+      "name": "09.1-express-rest-api_REVISED_4-1-25",
+      "path": "../09.1-express-rest-api_REVISED_4-1-25"
+    },
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "09.1-express-rest-api_REVISED_4-1-25"
+  }
+}

@@ -1,0 +1,26 @@
+//- layout.pug
+
+html
+  head
+    title= "JB's Photos"
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/static/css/style.css')
+  body
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      div.container-fluid
+        div.navbar-header
+          div.navbar-title
+            div.navbar-line1 John Bric's
+            div.navbar-line2 Photo Catalog
+        button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarNav', aria-controls='navbarNav', aria-expanded='false', aria-label='Toggle navigation')
+          span.navbar-toggler-icon
+        .collapse.navbar-collapse#navbarNav
+          ul.navbar-nav.ml-auto
+            li.nav-item
+              a.nav-link(href='/') Homepage
+            li.nav-item
+              a.nav-link(href='/photos') Photo Catalog
+            li.nav-item
+              a.nav-link(href='/photos#newPhotoForm') Upload New Photo
+    h2 Bric's Photo Catalog
+    block content

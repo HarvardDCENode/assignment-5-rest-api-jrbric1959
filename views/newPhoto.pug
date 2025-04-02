@@ -1,0 +1,30 @@
+//newPhoto.pug
+
+.container
+  .row
+    .col-md-6.col-md-offset-3.form-container
+      h2(style="text-align: left; margin-bottom: 20px;") Upload a New Photo
+      if flashFileUploadError.length > 0
+        h3.alert.alert-danger.blinking-text #{flashFileUploadError}
+      if flashNoFileSelected.length > 0
+        h3.alert.alert-danger.blinking-text #{flashNoFileSelected}
+      form(id='newPhotoForm' method='POST' action="/photos" enctype="multipart/form-data")
+        div.form-group
+          label(for='title') Photo Title :
+          input#name.form-control(type='text', placeholder='photo title' name='title')
+        div.form-group
+          label(for='description') Description:
+          input#description.form-control(type='text', placeholder='description' name='description')
+        div.form-group
+          label(for='location') Location:
+          input#location.form-control(type='text', placeholder='location' name='location')
+        div.form-group
+          label(for='year') Year:
+          input#year.form-control(type='text', placeholder='year' name='year')
+        div.form-group
+          label(for='occasion') Occasion:
+          input#email.form-control(type='text', placeholder='occasion' name='occasion')
+        div.form-group
+          label(for='image') Image:
+          input#image.form-control(type='file', name='image')
+        button.btn.btn-primary(type='submit') Post Your Photo

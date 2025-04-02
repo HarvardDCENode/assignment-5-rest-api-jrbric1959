@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  div.content-wrapper(style="padding: 20px;") // Add a wrapper with padding
+    .row
+      each photo in photos
+        .col-sm-3
+          p Title: #{photo.title}
+          p Description: #{photo.description}
+          //- p Size: #{photo.size} | Filename: #{photo.originalname} | Uploaded: #{photo.createdAt}
+          // Add a container around the image with fixed dimensions
+          div(style="width: 200px; height: 200px; display: flex; justify-content: center; align-items: center; border: 1px solid #ccc; overflow: hidden;")
+            img(src=photo.imageurl, style="max-height: 100%; max-width: 100%; object-fit: contain;")
+          div.form-group(style="display: flex; gap: 10px; align-items: center;")
+            a.btn.btn-primary(href='/photos/'+photo._id style="margin: 0;") Edit File Info
+            a.btn.btn-danger(href='/photos/delete/'+photo._id style="margin: 0;") Delete
+          // Render all comments in a single textarea
+          div(style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;")
+            label(for="comments") Comments:
+            textarea.form-control(name="comments" rows="10")
+              each comment in photo.commentArray
+                p BRIC TEST
+                = '\n bric test\n'
+                = `Name: ${comment.name || "No name provided"} | Date/Time: ${comment.date_time || "No date provided"} \n| ${comment.comment_text || "No comment provided"}\n\n`
+          form(method='GET', action="/photos/addCommentForm/"+photo._id)
+            button.btn.btn-primary(type='submit') Add New Comment
+
+  include newPhoto

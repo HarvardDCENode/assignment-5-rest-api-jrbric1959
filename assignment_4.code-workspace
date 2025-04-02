@@ -1,0 +1,15 @@
+{
+	"folders": [
+    {
+      "name": "assignement_4_older_versions",
+      "path": "../assignement_4_older_versions"
+    },
+    {
+      "name": "assignment-4_CURRENT_-express-routing-mongodb-and-mongoose-jrbric1959",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "assignment-4_CURRENT_-express-routing-mongodb-and-mongoose-jrbric1959"
+  }
+}
