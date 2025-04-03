@@ -4,22 +4,23 @@ const express = require('express');
 const router = express.Router(); // create router for routing
 const multer = require('multer'); // handle file uploads
 // storage and filter logic for uploads
-const photoController = require('../controllers/photoController');
 const flash = require('express-flash');// support flash messages
-const Photo = require('../models/photoModel'); // model for photo metadata
+const Photo = require('../../models/photoModel'); // model for photo metadata
+const photoController = require('../../controllers/photoController');
 const upload = multer({
   //instance of multer to specify dest/filename of uploaded photos
   storage: photoController.storage, //pass storage object to multer
   fileFilter: photoController.imageFilter // pass fileFilter object to multer
 });
 
+const PhotoService = photoController.PhotoService;
 //----------------------------------------------------------------------------------
 router.use(flash());// configure flash messaging middleware
 //----------------------------------------------------------------------------------
 // List all photos
 router.get('/', async (req, res, next)=>{
   try {
-    const photos = await Photo.find({}); // find and assign all docs in Photo collection to photos
+    const photos = await PhotoService.list(); // find and assign all docs in Photo collection to photos
     console.log("\n photos.js LINE 22: photos = ", photos, "\n"); 
     res.render('photos', { //render photos.pug to show all photos
       photos : photos,

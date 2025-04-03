@@ -1,6 +1,6 @@
 //photoController.js
-
 const multer = require('multer');
+const Photo = require('../models/photoModel'); //get Photo model from /models/photoModel.js
 
 // configure disk storage for files handled by multer
 const storage = multer.diskStorage({
@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
   // cb(null, Date.now() + "-" + file.originalname);
   }
 });
-
 // configure file extension filter for uploads
 const imageFilter = function(req, file, cb) {
   if (file.originalname.match(/\.(jpg|jpeg|png|gif)$/)){
@@ -23,6 +22,14 @@ const imageFilter = function(req, file, cb) {
     cb(new Error("OnlyImageFilesAllowed"), false);
  }
 }
-
+class PhotoService {
+  static list(){
+    return (Photo.find({}))
+    .then((obj)=>{
+      return obj;
+    })
+  }
+}
+module.exports.PhotoService = PhotoService;
 module.exports.storage = storage;
 module.exports.imageFilter = imageFilter;

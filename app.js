@@ -2,7 +2,7 @@
 
 const express = require('express');
 const path = require('path');
-const photos = require('./routes/photos');
+const photos = require('./routes/api/photos');
 const bodyparser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -11,14 +11,16 @@ require('dotenv').config();
 
 const app = express();
 // connect to MongoDB database @cluster0.yqrjb.mongodb.net/photoDB
-mongoose.connect(process.env.MONGO_URI, {  
-  useNewUrlParser: true, 
-  useUnifiedTopology: true
-})
-.catch((err)=>{   // if mongoose fails to connect, err is error object
-  console.error(`database connection error: ${err}`); // log error to console
-  process.exit(); // global object stop Node.js if DB connection error
-});
+mongoose.connect(process.env.MONGO_URI);
+// REMOVED BELOW BECAUSE DEPRECATED
+// mongoose.connect(process.env.MONGO_URI, {  
+//   useNewUrlParser: true, 
+//   useUnifiedTopology: true
+// })
+// .catch((err)=>{   // if mongoose fails to connect, err is error object
+//   console.error(`database connection error: ${err}`); // log error to console
+//   process.exit(); // global object stop Node.js if DB connection error
+// });
 app.use(cookieParser('cscie31-secret')); // parse/manage cookies, create req.cookies
 app.use(cookieParser('cscie31-secret')); // Parse and sign cookies
 app.use(session({ // use express-session to handle user sessions and store session data on server
