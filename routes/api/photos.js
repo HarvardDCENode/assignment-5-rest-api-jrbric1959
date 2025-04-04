@@ -1,9 +1,8 @@
 //photos.js
 
-const express = require('express');
+const express = require('express'); // load express
 const router = express.Router(); // create router for routing
 const multer = require('multer'); // handle file uploads
-// storage and filter logic for uploads
 const flash = require('express-flash');// support flash messages
 const Photo = require('../../models/photoModel'); // model for photo metadata
 const photoController = require('../../controllers/photoController');
@@ -12,7 +11,6 @@ const upload = multer({
   storage: photoController.storage, //pass storage object to multer
   fileFilter: photoController.imageFilter // pass fileFilter object to multer
 });
-
 const PhotoService = photoController.PhotoService;
 //----------------------------------------------------------------------------------
 router.use(flash());// configure flash messaging middleware
@@ -40,7 +38,7 @@ router.get('/:photoid', async (req, res, next)=>{ //handle get request from URL 
   try {
   console.log("finding "+req.params.photoid);
   console.log("\n photos.js LINE 37: req.params = ", req.params, "\n");
-  const photo = await Photo.findOne({'_id': req.params.photoid}) // fine document with _id=photoid
+  const photo = await PhotoService.read(req.params.photoid) // find document with _id=photoid
     res.render('updatePhoto', { // render page with form to update metadata of photo
       photo: photo, // pass in all photo documents
       flashPhotoFindError: req.flash("photoFindError"), // pass in flash property for "photoFindError"
@@ -51,11 +49,10 @@ router.get('/:photoid', async (req, res, next)=>{ //handle get request from URL 
   };
 });
 //----------------------------------------------------------------------------------
-// Submit form for updating metadata in selected photo document (_id=photoid)
+// UPDATE METADATA OF PHOTO
 router.post('/:photoid', async (req, res, next) => {
   try {
     // get Photo object with _id=photoid and assign to photo
-    const photo = await Photo.findOne({ '_id': req.params.photoid });  
     const data = {
       title: req.body.title,
       description: req.body.description,
@@ -63,9 +60,9 @@ router.post('/:photoid', async (req, res, next) => {
       year: req.body.year,
       occasion: req.body.occasion
     };
-    photo.set(data); // Update the revised fields of the Photo object 
-    await photo.save(); // Save the updated Photo object to the collection
-    res.redirect('/photos'); // Redirect to the photos page after updating
+    // Update the Photo object to the collection
+    await PhotoService.update(req.params.photoid, data); 
+    res.redirect('/photos'); // Redirect to the photos list after updating
   } 
   catch (err) {
     console.error("Problem updating photo:", err); // Logs the actual error
@@ -79,7 +76,7 @@ router.post('/commentArray/:photoid', async (req, res, next) => {
     console.log("photos.js LINE 77: req.body.comment_text =", req.body.comment_text);
     console.log("photos.js LINE 78: req.params =", req.params);
     // Find the photo using ID criterion
-    const singleFoundPhoto = await Photo.findOne({ _id: req.params.photoid });
+    const singleFoundPhoto = await PhotoService.read(req.params.photoid);
     console.log("photos.js LINE 82: singleFoundPhoto =", singleFoundPhoto);
     if (!singleFoundPhoto) {  // if photo not found return error message
       console.log("photos.js LINE 85: Photo not found.");
@@ -91,9 +88,9 @@ router.post('/commentArray/:photoid', async (req, res, next) => {
       comment_text: req.body.comment_text
     }
     // Add the comment to the commentArray property of the selected photo
-    singleFoundPhoto.commentArray.push(newCommentElement);  
-    console.log("photos.js LINE 99: singleFoundPhoto = ", singleFoundPhoto);
-    await singleFoundPhoto.save();
+    const updatedPhoto = await PhotoService.update(req.params.photoid, newCommentElement);  
+    // const updatedPhoto = await PhotoService.push(singleFoundPhoto, newCommentElement);  
+    console.log("photos.js LINE 99: updatedPhoto = ", updatedPhoto);
     // Redirect to the photos page to list the photos with the new message added
     res.redirect('/photos');
   } 
@@ -107,7 +104,7 @@ router.post('/commentArray/:photoid', async (req, res, next) => {
 router.get('/addCommentForm/:photoid', async (req, res, next) => {
   try {    
     // Find photo to add comment to
-    const singleFoundPhoto = await Photo.findOne({ _id: req.params.photoid }); 
+    const singleFoundPhoto = await PhotoService.read(req.params.photoid); 
     if (!singleFoundPhoto) {  // if photo not found return error message
       console.log("photos.js LINE 111: Photo not found.");
       return res.status(404).send('Photo not found');
@@ -131,7 +128,7 @@ router.get('/delete/:photoid', async (req, res, next)=>{// Delete a picture
   const photoIdDelete = req.params.photoid;  // get _id of photo to delete
   try {
     // delete photo(_id=photoid) and assign to variable photoToDelete
-    const photoToDelete = await Photo.findOneAndDelete({ _id: photoIdDelete });
+    const photoToDelete = await PhotoService.delete(photoIdDelete );
     if (photoToDelete) { // if 
       console.log('photos.js LINE 102:  Document deleted =', photoToDelete);
     } 
@@ -161,14 +158,15 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       imageurl: path,
       title: req.body.title,
       comment: req.body.comment,
-      description: req.body.description,
+      description: req.body.description, 
       location: req.body.location,
       year: req.body.year,
       filename: req.file.filename,
       size: req.file.size / 1024 | 0
     };
-    const photo = new Photo(photoData); // create new Photo object 
-    await photo.save(); // Save the photo to the database
+    // const photo = new Photo(photoData); // create new Photo object 
+    await PhotoService.create(photoData); // Save the photo to the database
+
     res.redirect('/photos'); // Redirect to the photos page after successful save
   } 
   catch (err) {
@@ -196,9 +194,6 @@ router.use(function(err, req, res, next){
   } 
   else if (err.message === "noFileSelected"){
     console.log("photos.js LINE 227: ERROR - no file selected");
-    // create flash message with key = fileUploadError in req.flash object
-    req.flash('noFileSelected', "No File Selected.  Please Select A File!!!");
-    // res.render('photos#newPhotoForm');
     res.redirect('/photos#newPhotoForm');
   }
   else{

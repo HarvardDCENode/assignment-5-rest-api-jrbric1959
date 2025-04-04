@@ -4,7 +4,7 @@ block content
   div.content-wrapper(style="padding: 20px;") // Add a wrapper with padding
     .row
       each photo in photos
-        .col-sm-3
+        .col-sm-2
           p Title: #{photo.title}
           p Description: #{photo.description}
           //- p Size: #{photo.size} | Filename: #{photo.originalname} | Uploaded: #{photo.createdAt}
@@ -19,8 +19,6 @@ block content
             label(for="comments") Comments:
             textarea.form-control(name="comments" rows="10")
               each comment in photo.commentArray
-                p BRIC TEST
-                = '\n bric test\n'
                 = `Name: ${comment.name || "No name provided"} | Date/Time: ${comment.date_time || "No date provided"} \n| ${comment.comment_text || "No comment provided"}\n\n`
           form(method='GET', action="/photos/addCommentForm/"+photo._id)
             button.btn.btn-primary(type='submit') Add New Comment

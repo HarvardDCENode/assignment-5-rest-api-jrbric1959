@@ -22,14 +22,43 @@ const imageFilter = function(req, file, cb) {
     cb(new Error("OnlyImageFilesAllowed"), false);
  }
 }
-class PhotoService {
-  static list(){
-    return (Photo.find({}))
-    .then((obj)=>{
-      return obj;
-    })
+class PhotoService { // operate on photos in Photo collection
+  // return array of documents in model Photo
+  static async list(){  // read all photos in Photo collection
+    const photos =   await Photo.find({});
+    return photos;
+  };
+  static async update(id, data) {  // update photo(_id=id) with data
+    const photo =  await Photo.findById(id);
+    const newPhoto = photo.set(data);
+    photo.save();
+    return newPhoto;
+  };
+  static async read(id) {  // find photo(_id=id) 
+    const photo =  await Photo.findById(id);
+    return photo;
+  };
+  static async delete(id) {  // delete photo(_id=id) 
+    const photo =  await Photo.findOneAndDelete(id);
+    return photo;
+  };
+  static async create(data){
+  // create instance of Photo (schema=schema?, collection=photos_JB_A)
+    const createdPhoto = new Photo();  
+    createdPhoto.set(data);
+    // save photo to collection=photos_JB_A with schema=schema?
+    createdPhoto.save();  
+  };
+  // PUSH comment onto commentArray of selected photo
+  static async push(photoToAddCommentTo, elementToAdd){
+    // add elementToAdd to array 
+    photoToAddCommentTo.commentArray.push(elementToAdd); 
+    console.log("photoController.js LINE 53: photoToAddCommentTo =  ", photoToAddCommentTo); 
+    await photoToAddCommentTo.save();
+      return photoToAddCommentTo;  
   }
 }
+
 module.exports.PhotoService = PhotoService;
 module.exports.storage = storage;
 module.exports.imageFilter = imageFilter;
