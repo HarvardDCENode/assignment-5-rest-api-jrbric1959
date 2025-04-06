@@ -70,28 +70,33 @@ router.post('/:photoid', async (req, res, next) => {
   }
 });
 //----------------------------------------------------------------------------------
-// Add comment to commentArray in selected photo (_id=photoid)
+// Add comment to selected photo
 router.post('/commentArray/:photoid', async (req, res, next) => {
   try {
     console.log("photos.js LINE 77: req.body.comment_text =", req.body.comment_text);
     console.log("photos.js LINE 78: req.params =", req.params);
-    // Find the photo using ID criterion
+    // Find the photo from photoid
     const singleFoundPhoto = await PhotoService.read(req.params.photoid);
     console.log("photos.js LINE 82: singleFoundPhoto =", singleFoundPhoto);
     if (!singleFoundPhoto) {  // if photo not found return error message
       console.log("photos.js LINE 85: Photo not found.");
       return res.status(404).send('Photo not found');
     }
-    const newCommentElement = {  // Prepare the comment data
+    const newComment = {  // Prepare the comment data
       name: req.body.name,
       date_time: req.body.date_time,
       comment_text: req.body.comment_text
     }
-    // Add the comment to the commentArray property of the selected photo
-    const updatedPhoto = await PhotoService.update(req.params.photoid, newCommentElement);  
-    // const updatedPhoto = await PhotoService.push(singleFoundPhoto, newCommentElement);  
-    console.log("photos.js LINE 99: updatedPhoto = ", updatedPhoto);
-    // Redirect to the photos page to list the photos with the new message added
+    console.log("photos.js LINE 91: commentArray = ", newComment);
+    // Get commentArray from singleFoundPhoto
+    const commentArray = singleFoundPhoto.commentArray;
+    console.log("photos.js LINE 95: commentArray = ", commentArray);
+    //push newComment onto commentArray in selected photo
+    singleFoundPhoto.commentArray.push(newComment);
+    const updatedPhoto = singleFoundPhoto;
+    //update selected photo
+    await PhotoService.update(req.params.photoid, updatedPhoto);
+    console.log("photos.js LINE 101: updatedPhoto = ", singleFoundPhoto);
     res.redirect('/photos');
   } 
   catch (err) {
@@ -100,19 +105,12 @@ router.post('/commentArray/:photoid', async (req, res, next) => {
   }
 });
 //----------------------------------------------------------------------------------
-// GET addCommentForm.pug with current commentArray value passed in
+// GET addCommentForm.pug to specify new comment to be added to selected photo
 router.get('/addCommentForm/:photoid', async (req, res, next) => {
   try {    
-    // Find photo to add comment to
-    const singleFoundPhoto = await PhotoService.read(req.params.photoid); 
-    if (!singleFoundPhoto) {  // if photo not found return error message
-      console.log("photos.js LINE 111: Photo not found.");
-      return res.status(404).send('Photo not found');
-    }  
-    console.log("\n\n photos.js LINE 117: photo = ", singleFoundPhoto,"\n\n");
     res.render('addCommentForm.pug', {  // render addCommentForm
-      photoid: req.params.photoid,    // pass in photoid
-      photo: singleFoundPhoto         // pass in selected photo
+      photoid: req.params.photoid    // pass in photoid
+      // photo: singleFoundPhoto         // pass in selected photo
     });
   } 
   catch (error) {
@@ -164,9 +162,7 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       filename: req.file.filename,
       size: req.file.size / 1024 | 0
     };
-    // const photo = new Photo(photoData); // create new Photo object 
     await PhotoService.create(photoData); // Save the photo to the database
-
     res.redirect('/photos'); // Redirect to the photos page after successful save
   } 
   catch (err) {

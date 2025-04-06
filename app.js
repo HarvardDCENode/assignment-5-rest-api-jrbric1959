@@ -12,17 +12,7 @@ require('dotenv').config();
 const app = express();
 // connect to MongoDB database @cluster0.yqrjb.mongodb.net/photoDB
 mongoose.connect(process.env.MONGO_URI);
-// REMOVED BELOW BECAUSE DEPRECATED
-// mongoose.connect(process.env.MONGO_URI, {  
-//   useNewUrlParser: true, 
-//   useUnifiedTopology: true
-// })
-// .catch((err)=>{   // if mongoose fails to connect, err is error object
-//   console.error(`database connection error: ${err}`); // log error to console
-//   process.exit(); // global object stop Node.js if DB connection error
-// });
 app.use(cookieParser('cscie31-secret')); // parse/manage cookies, create req.cookies
-app.use(cookieParser('cscie31-secret')); // Parse and sign cookies
 app.use(session({ // use express-session to handle user sessions and store session data on server
   secret:"cscie31",
   resave: "true",
@@ -30,15 +20,15 @@ app.use(session({ // use express-session to handle user sessions and store sessi
 }));
 // parse urlencoded data in body of req, false: simple values/arrays in body
 app.use(bodyparser.urlencoded({extended: false}));
+// tell render(filename.pug) to look in views at this path 
 app.set('views', path.join(__dirname, 'views'));  // set path to views folder
 app.set('view engine', 'pug'); // use pug templating engine
 // Set ../public as static route to /img directory for storing uploaded images
 app.use('/static', express.static(path.join(__dirname, 'public')));
-  // the real business of our app, the route for /photos, which 
-  // is handled by the photos router
-app.use('/photos', photos); // set /photos as base path to routing  fo 
+console.log("app.js LINE 37 __dirname = ", __dirname);
+app.use('/photos', photos); // set /photos as base path for route handlers in photo.js 
 app.get('/', (req, res) => {
-  res.render('homepage'); // This will render views/homepage.pug
+  res.render('homepage'); // Requests to the root directory will render views/homepage.pug
 });
 app.use((req, res, next)=>{  // if routes above not requested
   var err = new Error(`Resource Not Found ${req.url}`);  // error message
