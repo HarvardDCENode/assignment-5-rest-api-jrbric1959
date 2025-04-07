@@ -4,8 +4,8 @@ const express = require('express'); // load express
 const router = express.Router(); // create router for routing
 const multer = require('multer'); // handle file uploads
 const flash = require('express-flash');// support flash messages
-const Photo = require('../../models/photoModel'); // model for photo metadata
-const photoController = require('../../controllers/photoController');
+const Photo = require('../models/photoModel'); // model for photo metadata
+const photoController = require('../controllers/photoController');
 const upload = multer({
   //instance of multer to specify dest/filename of uploaded photos
   storage: photoController.storage, //pass storage object to multer
@@ -89,14 +89,19 @@ router.post('/commentArray/:photoid', async (req, res, next) => {
     }
     console.log("photos.js LINE 91: commentArray = ", newComment);
     // Get commentArray from singleFoundPhoto
-    const commentArray = singleFoundPhoto.commentArray;
+    let commentArray = singleFoundPhoto.commentArray;
     console.log("photos.js LINE 95: commentArray = ", commentArray);
     //push newComment onto commentArray in selected photo
+     
     singleFoundPhoto.commentArray.push(newComment);
-    const updatedPhoto = singleFoundPhoto;
+    commentArray = singleFoundPhoto.commentArray
+
+    const data = {commentArray: commentArray }
+
     //update selected photo
-    await PhotoService.update(req.params.photoid, updatedPhoto);
-    console.log("photos.js LINE 101: updatedPhoto = ", singleFoundPhoto);
+    console.log("photos.js LINE 113: data = ", data);
+    const updatedPhoto = await PhotoService.update(req.params.photoid, data);
+    console.log("photos.js LINE 115: updatedPhoto = ", updatedPhoto);
     res.redirect('/photos');
   } 
   catch (err) {
@@ -162,7 +167,9 @@ router.post('/', upload.single('image'), async (req, res, next) => {
       filename: req.file.filename,
       size: req.file.size / 1024 | 0
     };
+    // const photo = new Photo(photoData); // create new Photo object 
     await PhotoService.create(photoData); // Save the photo to the database
+
     res.redirect('/photos'); // Redirect to the photos page after successful save
   } 
   catch (err) {

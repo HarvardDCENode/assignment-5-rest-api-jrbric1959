@@ -30,16 +30,19 @@ class PhotoService { // operate on photos in Photo collection
   };
   static async update(id, data) {  // update photo(_id=id) with data
     const photo =  await Photo.findById(id);
-    const newPhoto = photo.set(data);
-    await photo.save();
-    return newPhoto;
+    const updatedPhoto = photo.set(data);
+    console.log("photoContoller.js  LINE 34:   data = ", data);
+    console.log("photoContoller.js  LINE 34:   updatedPhoto = ", updatedPhoto);
+    await updatedPhoto.save();
+    return updatedPhoto;
   };
   static async read(id) {  // find photo(_id=id) 
     const photo =  await Photo.findById(id);
     return photo;
   };
   static async delete(id) {  // delete photo(_id=id) 
-    const photo =  await Photo.findOneAndDelete(id);
+    console.log("photoController LINE 44: id = ", id);
+    const photo =  await Photo.findOneAndDelete({_id: id});
     return photo;
   };
   static async create(data){
@@ -47,7 +50,8 @@ class PhotoService { // operate on photos in Photo collection
     const createdPhoto = new Photo();  
     createdPhoto.set(data);
     // save photo to collection=photos_JB_A with schema=schema?
-    await createdPhoto.save();  
+    await createdPhoto.save(); 
+    return  createdPhoto;
   };
 }
 

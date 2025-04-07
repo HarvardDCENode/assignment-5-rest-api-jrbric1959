@@ -2,7 +2,9 @@
 
 const express = require('express');
 const path = require('path');
-const photos = require('./routes/api/photos');
+const photos = require('./routes/photos');
+const api_photos = require('./routes/api/api-photos');
+
 const bodyparser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -27,6 +29,8 @@ app.set('view engine', 'pug'); // use pug templating engine
 app.use('/static', express.static(path.join(__dirname, 'public')));
 console.log("app.js LINE 37 __dirname = ", __dirname);
 app.use('/photos', photos); // set /photos as base path for route handlers in photo.js 
+app.use('/api/photos', api_photos); // set /api/photos as base path for route handlers in api-photo.js 
+
 app.get('/', (req, res) => {
   res.render('homepage'); // Requests to the root directory will render views/homepage.pug
 });
