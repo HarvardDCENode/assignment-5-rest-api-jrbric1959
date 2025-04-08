@@ -12,6 +12,23 @@ const upload = multer({
   fileFilter: photoController.imageFilter // pass fileFilter object to multer
 });
 const PhotoService = photoController.PhotoService;
+router.use((req, res, next)=>{
+  res.set({
+  // allow any domain, allow REST methods we've implemented
+    'Access-Control-Allow-Origin':'*',
+    'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,OPTIONS',
+    "Access-Control-Allow-Headers": "Content-Type, Access-Control-Allow-Headers",
+  // Set content-type for all api requests
+    'Content-type':'application/json'
+  });
+  if (req.method == 'OPTIONS'){
+    return res.status(200).end();
+  }
+  next();
+});
+
+
+
 //----------------------------------------------------------------------------------
 router.use(flash());// configure flash messaging middleware
 //----------------------------------------------------------------------------------
@@ -20,7 +37,7 @@ router.use(flash());// configure flash messaging middleware
 router.get('/', async (req, res, next)=>{
   try {
     const photos = await PhotoService.list(); // find and assign all docs in Photo collection to photos
-    console.log("\n photos.js LINE 22: photos = ", photos, "\n"); 
+    console.log("\n /ROUTES/API/api-photos.js LINE 22: photos = ", photos, "\n"); 
     // res.render('photos', { //render photos.pug to show all photos
     //   photos : photos,
     //   flashFileUploadError: req.flash("fileUploadError"),  
@@ -32,8 +49,6 @@ router.get('/', async (req, res, next)=>{
 
     // res.setHeader("Content-Type", "text/html");
     // res.send(`<pre>${JSON.stringify(photo, null, 2)}</pre>`);
-
-
 
   }
   catch(err) {
@@ -63,7 +78,7 @@ router.get('/:photoid', async (req, res, next)=>{ //handle get request from URL 
 // UPDATE METADATA OF PHOTO
 router.put('/:photoid', async (req, res, next) => {
   try {
-    // get Photo object with _id=photoid and assign to photo
+    // get data passed in body for update
     const data = {
       title: req.body.title,
       description: req.body.description,
