@@ -32,7 +32,7 @@ class PhotoService { // operate on photos in Photo collection
     const photo =  await Photo.findById(id);
     const updatedPhoto = photo.set(data);
     console.log("photoContoller.js  LINE 34:   data = ", data);
-    console.log("photoContoller.js  LINE 34:   updatedPhoto = ", updatedPhoto);
+    console.log("photoContoller.js  LINE 35:   updatedPhoto = ", updatedPhoto);
     await updatedPhoto.save();
     return updatedPhoto;
   };

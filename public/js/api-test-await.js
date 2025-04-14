@@ -1,79 +1,71 @@
 // api-test-await.js
 
 (function(){
-   const baseURL = 'http://localhost:8080'; //  for development, it's http://localhost:8080
+   const baseURL = 'http://localhost:8080'; //  for development
+  //  const baseURL = 'http://134.122.0.238:8080'; // for Digital Ocean, 
    async function testAPIs(){
-    // test list first
-    let testId = '';
-    let testJSON = {};
     try{
-      // list
-      let list = await callAPI('GET', '/api/photos', null, null);
-      console.log('\n\n**************\nlist results:');
-      console.log(list);
-
-      // create form data object with photo and metadata
-      // This section is for uploading a file to the REST API
-      let input = document.querySelector('input[type="file"]');
-
-      // ✅ Declare `photoId` outside so it's accessible later
+      // Declare variables outside so accessible later in if/else blocks
+      let newPhoto;
       let photoId = null;
-
-      if (!input.files[0]) {
-        console.error("❌ No file selected!");
-      } else {
-        let data = new FormData();
-        data.append("image", input.files[0]);
-        data.append("title", "BRICKYS API-TEST-AWAIT.JS TITLE");
-        data.append("description", "run from api-test-await.js");
-        data.append("location", "BRICKYS HOUSE");
-
-        console.log("api-test-await.js LINE 21: data =", data);
-        console.log("api-test-await.js LINE 22: input.files[0] =", input.files[0]);
-
-        // ✅ Log raw API response before parsing JSON
-        const newPhoto = await callAPI("POST", "/api/photos", null, data);
-        console.log("✅ Created Photo:", newPhoto);
-
-        // ✅ Assign `photoId` inside the block where `newPhoto` exists
-        photoId = newPhoto._id;
-        console.log('\n\n***************\ncreate results: BRICKY!!!');
-        console.log(newPhoto);
-      }
-
-      //  
-      console.log("📌 Photo ID:", photoId);
-
-      // If you don't have a file upload component to your application, a simple JSON object will do
-      /*
-      let data = {
-        "title": "My API Test Title",
-        "description": "This is an AJAX API test"
-      }
-      */
-      // create
-      // let newPhoto = await callAPI('POST', '/api/photos', null, photoData)
-
-        // find
+      //--------------------------------------------------------------------------
+      // list all photos
+        let list = await callAPI('GET', '/api/photos', null, null);
+        console.log('\n\n**************\n list all current photos:');
+        console.log(list);
+        //--------------------------------------------------------------------------
+        // create a photo with image, title, description and location hard coded
+        let input = document.querySelector('input[type="file"]');
+        if (!input.files[0]) {
+          console.error("No file selected!");
+        } else {
+          let data = new FormData();
+          data.append("image", input.files[0]);
+          data.append("title", "BRICKYS API-TEST-AWAIT.JS TITLE");
+          data.append("description", "INITIAL DESCRIPTION:  run from api-test-await.js");
+          data.append("location", "BRICKYS HOUSE");
+          console.log("api-test-await.js LINE 21: data =", data);
+          console.log("api-test-await.js LINE 22: input.files[0] =", input.files[0]);
+          newPhoto = await callAPI("POST", "/api/photos", null, data);
+          photoId = newPhoto._id;
+          console.log('\n\n***************\n create a new photo: ');
+          console.log(newPhoto);
+        }
+        console.log("Photo ID:", photoId);
+        //--------------------------------------------------------------------------
+        // retrieve created photo 
         let retreivedNewPhoto = await callAPI('GET','/api/photos/'+newPhoto._id, null, null)
-        console.log('\n\n**************\nfind results:');
+        console.log('\n\n**************\n retrieve the new created photo:');
         console.log(retreivedNewPhoto);
-
-        // update description
-        retreivedNewPhoto.description += ' appended by the AJAX API ';
-        let updatedPhoto = await callAPI('PUT','/api/photos/'+retreivedNewPhoto._id, null, retreivedNewPhoto)
-        console.log('\n\n*************\nupdate results:');
-        console.log(updatedPhoto);
-        
+        //--------------------------------------------------------------------------
+        // update description field of created photo
+        const updatedData = {'description' : 'UPDATED DESCRIPTION: THIS DESCRIPTION WAS UPDATED IN API-TEST-AWAIT.JS'};
+        let updatedPhoto = await callAPI('PUT','/api/photos/'+retreivedNewPhoto._id, null, updatedData)
+        // let updatedPhoto = await callAPI('PUT','/api/photos/'+retreivedNewPhoto._id, null, retreivedNewPhoto)
+        console.log('\n\n*************\n update the description field:');
+        console.log('api-test-await LINED 53, updatedPhoto = ', updatedPhoto);
+        //--------------------------------------------------------------------------
+        // update commentArray field of created photo
+        const newCommentArrayElement = {  // Define the comment 
+          name: 'JB, added from api-text-await',
+          date_time: 'whenever, added from api-text-await',
+          comment_text: 'whatever, added from api-text-await'
+        };
+        let newUpdatedPhoto = await callAPI('PUT','/api/photos/addComment/'+retreivedNewPhoto._id, null, newCommentArrayElement)
+        // let updatedPhoto = await callAPI('PUT','/api/photos/'+retreivedNewPhoto._id, null, retreivedNewPhoto)
+        console.log('\n\n*************\n  add a comment to commentArray field:');
+        console.log('api-test-await LINED 53, newUpdatedPhoto = ', newUpdatedPhoto);
+        //--------------------------------------------------------------------------
         // now find again to confirm that the description update was changed
         let retreivedUpdatedPhoto = await callAPI('GET','/api/photos/'+updatedPhoto._id, null, null)
-        console.log('\n\n*************\nfind results (should contain updated description field):');
+        console.log('\n\n*************\n getting updated photo from the database to confirm the updates have been stored');
         console.log(retreivedUpdatedPhoto);
-
+        //--------------------------------------------------------------------------
         //delete
-        let deletedPhoto = await callAPI('DELETE', '/api/photos/'+retreivedUpdatedPhoto._id, null, null)
+        let deletedPhoto = await callAPI('DELETE', '/api/photos/delete/'+retreivedUpdatedPhoto._id, null, null)
+        console.log('\n\n*************\ndelete photo (should show the photo that was deleted):');
         console.log(deletedPhoto);
-
+        //--------------------------------------------------------------------------
     } catch(err) {
         console.error(err);
     };
@@ -100,9 +92,7 @@
         ...(method=='POST' ? {body: body} : {}),
         ...(method=='PUT' ?  {headers: jsonMimeType, body:JSON.stringify(body)} : {})
       });
-      // response.json() parses the textual JSON data to a JSON object. 
-      // Returns a Promise that resolves with the value of the JSON object 
-      //  which you can pick up as the argument passed to the .then()
+      
       return response.json(); 
     }catch(err){
       console.error(err);
@@ -110,8 +100,7 @@
     }
   }
       
-  // Calls our test function when we click the button
-  //  afer validating that there's a file selected.
+  // Calls the test function when clicking the button
   document.querySelector('#testme').addEventListener("click", ()=>{
     let input = document.querySelector('input[type="file"]')
     if (input.value){ 

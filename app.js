@@ -22,6 +22,7 @@ app.use(session({ // use express-session to handle user sessions and store sessi
 }));
 // parse urlencoded data in body of req, false: simple values/arrays in body
 app.use(bodyparser.urlencoded({extended: false}));
+app.use(express.json());  
 // tell render(filename.pug) to look in views at this path 
 app.set('views', path.join(__dirname, 'views'));  // set path to views folder
 app.set('view engine', 'pug'); // use pug templating engine
