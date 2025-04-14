@@ -23,12 +23,14 @@ Assignment #5: REST APIs
 -------------------------------------------------------------------------------------------------------------------
 GUIDE FOR RUNNING Assignment #5
 
-To open the HTML file for testing the Photos API, the URL for running locally is:
+
+For opening the HTML file for testing the Photos API in Digital Ocean the URL is:
+http://134.122.0.238:8081/static/index.html
+
+For opening the HTML file for testing the Photos API locally, the URL is:
 http://localhost:8080/static/index.html
 
 
-For opening the HTML file in Digital Ocean the URL is:
-http://134.122.0.238:8080/static/index.html
 
 
 
